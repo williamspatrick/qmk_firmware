@@ -9,7 +9,7 @@ enum custom_layer_and_keys {
     FN,
     LOWER,
     RAISE,
-    CMD,
+    NUMP,
     SWAP,
     SWITCH,
 };
@@ -19,8 +19,7 @@ enum custom_layer_and_keys {
 // Layer swap keys.
 #define KFN MO(FN)
 #define KLOWER MO(LOWER)
-#define KRAISE TG(RAISE)
-#define KCMD TG(CMD)
+#define KRAISE KEYCODE(RAISE)
 #define KSWAP TG(SWAP)
 // Trigger KVM switch.
 #define KSWITCH KEYCODE(SWITCH)
@@ -51,9 +50,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
      MT_CESC, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                               KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
   //├────────┼────────┼────────┼────────┼────────┼────────┼────────┐        ┌────────┼────────┼────────┼────────┼────────┼────────┼────────┤
-     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KFN,              KCMD,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
+     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KFN,              KRAISE,  KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT,
   //└────────┴────────┴────────┴───┬────┴───┬────┴───┬────┴───┬────┘        └───┬────┴───┬────┴───┬────┴───┬────┴────────┴────────┴────────┘
-                                    KC_LGUI, KC_LALT, KC_SPC,                    KC_ENT,  KLOWER,  KRAISE
+                                    KC_LGUI, KC_LALT, KC_SPC,                    KC_ENT,  KLOWER,  KC_ESC
                                 // └────────┴────────┴────────┘                 └────────┴────────┴────────┘
   ),
 
@@ -100,7 +99,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 
 
-  [CMD] = LAYOUT(
+  [NUMP] = LAYOUT(
   //┌────────┬────────┬────────┬────────┬────────┬────────┐                          ┌────────┬────────┬────────┬────────┬────────┬────────┐
      _______, _______, _______, _______, _______, _______,                            KC_NUM,  KC_PEQL, KC_PSLS, KC_PAST, KC_PMNS, _______,
   //├────────┼────────┼────────┼────────┼────────┼────────┤                          ├────────┼────────┼────────┼────────┼────────┼────────┤
@@ -139,6 +138,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       }
       return false;
       break;
+
+    case KRAISE:
+      if (record->event.pressed) {
+          if (!(get_mods() & MOD_MASK_SHIFT)) {
+              layer_invert(RAISE);
+          }
+          else {
+              layer_invert(NUMP);
+          }
+      }
+      return false;
+      break;
   }
   return true;
 }
@@ -157,7 +168,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     rgblight_set_layer_state(FN, layer_state_cmp(state, FN));
     rgblight_set_layer_state(LOWER, layer_state_cmp(state, LOWER));
     rgblight_set_layer_state(RAISE, layer_state_cmp(state, RAISE));
-    rgblight_set_layer_state(CMD, layer_state_cmp(state, CMD));
+    rgblight_set_layer_state(NUMP, layer_state_cmp(state, NUMP));
     rgblight_set_layer_state(SWAP, layer_state_cmp(state, SWAP));
 
     return state;
